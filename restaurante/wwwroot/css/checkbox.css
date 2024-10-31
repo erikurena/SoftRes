@@ -1,0 +1,46 @@
+﻿
+article {
+    position: relative;
+    width: 105px;
+    height: 80px;
+    margin: 5px;
+    float: left;
+    border: 2px solid #50bcf2;
+    box-sizing: border-box;
+    font-family: 'Helvetica Now Display';
+    border-radius: 10px 10px;
+}
+
+    article .queso-info {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 25px;
+        transition: .5s ease;
+        color: #ff6a00ff;
+    }
+
+    article input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 105px;
+        height: 80px;
+        opacity: 0;
+        cursor: pointer;
+      
+    }
+
+input[type=checkbox]:checked ~ .queso-info {
+    background-color: #fe0000;
+    color: #ffd800;
+    border-radius: 5px 5px;
+}
+
+.quesos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}

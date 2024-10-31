@@ -1,0 +1,71 @@
+﻿@model restaurante.Models.Empleado
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Detalle</h1>
+<div class="card">
+    <div class="card-header">
+        <h4>Empleado</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col col-sm-5 col-md-4 col-lg-4">
+                @if(!string.IsNullOrEmpty(Model.FotoEmpleado))
+                {
+                    <img src="~/FotoUsuario/@Model.FotoEmpleado" class="w-100" style="height:230px;"/>
+                }
+                else
+                {
+                    <img src="~/FotoUsuario/perfil-de-usuario.webp" class="w-100" style="height:230px;" />
+                }
+            </div>
+            <div class="col col-sm-7 col-md-8 col-lg-8">
+                <dl class="row">
+                    <dt class="col-sm-5 col-md-5 col-lg-5">
+                        @Html.DisplayNameFor(model => model.Nombre)
+                    </dt>
+                    <dd class="col-sm-7  col-md-7 col-lg-7">
+                        @Html.DisplayFor(model => model.Nombre)
+                    </dd>
+                    <dt class="col-sm-5 col-md-5 col-lg-5">
+                        @Html.DisplayNameFor(model => model.ApellidoPaterno)
+                    </dt>
+                    <dd class="col-sm-7  col-md-7 col-lg-7">
+                        @Html.DisplayFor(model => model.ApellidoPaterno)
+                    </dd>
+                    <dt class="col-sm-5 col-md-5 col-lg-5">
+                        @Html.DisplayNameFor(model => model.ApellidoMaterno)
+                    </dt>
+                    <dd class="col-sm-7  col-md-7 col-lg-7">
+                        @Html.DisplayFor(model => model.ApellidoMaterno)
+                    </dd>
+                    <dt class="col-sm-5 col-md-5 col-lg-5">
+                        Contratación
+                    </dt>
+                    <dd class="col-sm-7  col-md-7 col-lg-7">
+                         @Html.DisplayFor(model => model.FechaContratacion)
+                    </dd>
+                    <dt class="col-sm-5 col-md-5 col-lg-5">
+                        @Html.DisplayNameFor(model => model.Telefono)
+                    </dt>
+                    <dd class="col-sm-7  col-md-7 col-lg-7">
+                        @Html.DisplayFor(model => model.Telefono)
+                    </dd>
+                    <dt class="col-sm-5 col-md-5 col-lg-5">
+                        Cargo
+                    </dt>
+                    <dd class="col-sm-7  col-md-7 col-lg-7">
+                        @Html.DisplayFor(model => model.IdCargoNavigation!.TipoCargo)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="mt-3">
+            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+        </div>
+
+    </div>
+</div>

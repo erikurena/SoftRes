@@ -1,0 +1,58 @@
+﻿@model restaurante.Models.Producto
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Crear</h1>
+<div class=" d-flex justify-content-center">
+    <div class="card col-12 col-sm-8 col-md-6 col-lg-6">
+        <div class="card-header">
+            <h4>Producto</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Nombre" class="control-label"></label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Descripcion" class="control-label"></label>
+                            <input asp-for="Descripcion" class="form-control" />
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="IdCategoria" class="control-label"></label>
+                            <select asp-for="IdCategoria" class="form-control form-select" asp-items="ViewBag.IdCategoria"></select>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Precio" class="control-label"></label>
+                            <input asp-for="Precio" class="form-control" />
+                            <span asp-validation-for="Precio" class="text-danger"></span>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <a asp-action="Index" class="btn btn-secondary">Voler a la lista</a>
+                            </div>
+                            <div class="form-group col">
+                                <input type="submit" value="Crear" class="btn btn-primary col-12" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

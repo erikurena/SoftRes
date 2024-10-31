@@ -1,0 +1,62 @@
+﻿@model IEnumerable<restaurante.Models.Orden>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center">Lista de Tickets</h1>
+
+<p>
+    <a asp-action="Create" asp-controller="Detalleordens" class="btn btn-outline-success">Crear Nuevo</a>
+</p>
+<table class="table tables">
+    <thead>
+        <tr>
+            <th>
+                Fecha de la Orden
+            </th>
+            <th>
+                 Hora
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th>
+               Cliente
+            </th>
+            <th>
+               Usuario
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaOrden)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TiempoOrden)
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdClienteNavigation.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdEmpleadoNavigation.Nombre)
+            </td>
+            <td class="col-3 ">
+                    <div class=" d-flex justify-content-end">
+                        <a asp-action="Details" asp-route-id="@item.IdOrden" class="btn btn-success  ms-2 me-2 ">Imprimir</a> |
+                        <a asp-action="Delete" asp-route-id="@item.IdOrden" class="btn btn-danger ms-2 me-2">Eliminar</a>
+                </div>
+                   
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

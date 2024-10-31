@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="es-es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - restaurante</title>  
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+</head>
+
+<body>
+    <section class="background-radial-gradient overflow-hidden" >
+        <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-lg-5">
+            <div class="row gx-lg-5 align-items-center mb-5">
+                <div class="col-lg-6 mb-lg-5 mb-lg-0" style="z-index: 10">
+                    <h1 class="my-5 my-md-1 my-lg-5  display-5 fw-bold ls-tight h1Login" style="color: hsl(218, 81%, 95%)">
+                        Las mejores Platos <br />
+                        <span style="color: hsl(218, 81%, 75%)">Con el mejor Sason</span>
+                    </h1>
+                    <p class="mb-4 opacity-90 ParrafoLogin fw-bold text-warning p-2" style="background-color: rgba(0,0,0,0.3); border-radius: 10px">
+                            Queremos ser un refugio donde las comidas se disfruten lentamente, rodeados de sonrisas y momentos compartidos. Nuestro compromiso es ofrecer no solo una deliciosa comida, sino también una experiencia que nutra el alma.
+                    </p>
+                    
+                </div>
+
+                <div class="col-lg-6 mb-5 mb-lg-0 position-relative">
+                    <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+                    <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
+
+                    <div class="card bg-glass">
+                        <div class="card-body px-4 py-5 px-md-5" >
+                            <form asp-action="Login" asp-controller="Login" method="post">
+                                <!-- 2 column grid layout with text inputs for the first and last names -->
+                                <div class="row text-center" style="font-family:'Helvetica Now Display'; color:#000;">
+                                  <h2>RESTAURANT</h2>
+                                </div>
+
+                                <!-- Email input -->
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <label class="form-label" for="form3Example3" style="font-family:'Helvetica Now Display'; color:#000;">Usuario:</label>
+                                    <input type="text" id="form3Example3" name="usuario" class="form-control" />
+                                </div>
+
+                                <!-- Password input -->
+                                <div data-mdb-input-init class="form-outline mb-4">
+                                    <label class="form-label" for="form3Example4" style="font-family:'Helvetica Now Display'; color:#000;">Password:</label>
+                                    <input type="password" id="form3Example4" name="password" class="form-control" />
+                                 
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">INGRESAR</button>
+                            </form>
+                            @if(TempData["error"] != null){
+                                <div class="alert alert-danger" role="alert">
+                                   @TempData["error"]
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section: Design Block -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+   
+</body>
+</html>

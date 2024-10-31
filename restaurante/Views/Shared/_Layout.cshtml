@@ -1,0 +1,106 @@
+﻿@using System.Security.Claims;
+
+@{
+    var IdUsuario = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var NombreUsuario = User.FindFirstValue(ClaimTypes.Name);
+    var ImgUsuario = User.FindFirstValue(ClaimTypes.GivenName);
+}
+
+
+<!DOCTYPE html>
+<html lang="es-es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - restaurante</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/restaurante.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+</head>
+
+<body>
+    <div id="wrapper">
+        <aside id="sidebar-wrapper">
+            <div class=" sidebar-brand text-center ps-5 ">
+                <h2 class="me-4">BROCOS</h2>
+            </div>
+            <ul class="sidebar-nav anton-regular  ">
+                <li class=" d-flex justify-content-end pe-4 me-3 ">
+                    @if (!string.IsNullOrEmpty(ImgUsuario))
+                    {
+                        <img src="~/FotoUsuario/@ImgUsuario" alt="Foto" class="d-flex p-0 m-0 rounded-circle  " style="width:150px; height:140px ">
+                    }
+                    else
+                    {
+                        <img src="~/FotoUsuario/perfil-de-usuario.webp" alt="Foto" class="p-0 m-0 rounded-circle" style="width:150px; height:140px ">
+                    }
+                </li>
+                <li>
+                    <span class="navbar-tex d-flex justify-content-center ps-1">@NombreUsuario <br /></span>
+                </li>
+                <li class="nav-item  ">
+                    <a class="nav-link  p-0" asp-area="" asp-controller="Home" asp-action="Index"><i class="m-1 text-center fa fa-home faHover bordeFa"></i><span class="textoNavbar"> Inicio</span> </a>
+                </li>
+              @if(User.IsInRole("2")){
+                    <li class="nav-item">
+                        <a class="nav-link p-0" asp-area="" asp-controller="Empleadoes" asp-action="Index"><i class="m-1 text-center fa fa-solid fa-user bordeFa faHover"></i><span class="textoNavbar"> Empleados</span>  </a>
+                    </li>
+                  }
+                <li class="nav-item ">
+                    <a class="nav-link p-0 " asp-area="" asp-controller="Complemento" asp-action="Index"><i class="m-1 text-center fa fa-solid fa-pizza-slice bordeFa faHover"></i><span class="textoNavbar"> Nuevo Producto</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link p-0 " asp-area="" asp-controller="Detalleordens" asp-action="Create"><i class="m-1 text-center fa fa-solid fa-cart-shopping bordeFa"></i><span class="textoNavbar"> Nueva Orden</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link p-0 " asp-area="" asp-controller="Ordens" asp-action="Index"><i class="m-1 fa  text-center fa-solid fa-utensils bordeFa faHover "></i><span class="textoNavbar"> Lista de Ordenes</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link p-0 " asp-area="" asp-controller="Reporte" asp-action="Create"><i class="m-1 text-center fa fa-solid fa-clipboard bordeFa faHover"></i><span class="textoNavbar"> Reportes</span></a>
+                </li>
+               
+            </ul>
+        </aside>
+
+        <div id="navbar-wrapper">
+            <nav class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a href="#" class="navbar-brand " id="sidebar-toggle"><i class="fa fa-solid fa-bars"></i></a>
+                    </div>
+                    <div class="d-flex">
+                        <a class="btn btn-outline-light p-0 border-0  " asp-controller="Login" asp-action="LogOut" style="font-family:'Franklin Gothic Medium'"><span class="m-2"><i class="fa fa-solid fa-door-open"></i> - Salir</span></a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <section id="content-wrapper" class="pb-5 me-0">
+            <div class="row">
+                <div class="col-lg-12">
+                    @RenderBody()
+                </div>
+            </div>
+        </section>
+
+        <br />
+
+        <footer class="  text-muted border-top  text-center  mt-5 mb-5  ">
+            <div class="container">
+                Ureña Soft &copy; 2024 - Restaurante - <a asp-area="" >Privacy</a>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

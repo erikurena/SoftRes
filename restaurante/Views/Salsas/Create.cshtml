@@ -1,0 +1,39 @@
+﻿@model restaurante.Models.Complemento
+
+@{
+    ViewData["Title"] = "Create";
+}
+<h1>Crear</h1>
+<div class="card">
+    <div class="card-header">
+        <h4>Salsa</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label  class="control-label">Nombre del Complemento</label>
+                        <input asp-for="NombreIngrediente" class="form-control" />
+                        <span asp-validation-for="NombreIngrediente" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label  class="control-label">Categoria</label>
+                        <select asp-for="IdCategoriaComplemento" class="form-control form-select" asp-items="ViewBag.listaSalsa"></select>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+                        </div>
+                        <div class="form-group col">
+                            <input type="submit" value="Crear" class="btn btn-primary col-12" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+

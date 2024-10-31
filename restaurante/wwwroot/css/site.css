@@ -1,0 +1,85 @@
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+   
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }  
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+body {
+    color: #efefef;
+    background-color: #202830;
+    position: relative;
+    min-height: 100%;
+}
+
+.fa-trash-can {
+    color: #808080;
+}
+
+    .fa-trash-can:hover {
+        color: #ae0c0c;
+    }
+
+.fa-user-pen {
+    color: #4b4b45;
+}
+    .fa-user-pen:hover {
+        color: #808080;
+    }
+
+.card {
+    background-color: #202830;
+    -webkit-box-shadow: 0px 0px 10px -1px rgb(0, 114, 255, 0.65);
+    -moz-box-shadow: 0px 0px 11px -1px rgba(0,0,0,0.65);
+    box-shadow: 0px 0px 9px -1px rgba(255,255,255,0.30);
+}
+
+.card-header {
+    color: #fff200;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.card-body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+h1 {
+    color: #ff6500;
+}
+
+.anton-regular {
+    font-family: 'Helvetica Now Display';
+}
+.tables{
+    color:#fff;
+}
+.totalVendido {
+    font-size: 40px;
+    border-radius: 30px;
+    background: #157db9;
+    box-shadow: 5px 5px 8px #6c2b2b, -5px -5px 8px #c43535;
+    font-family: 'Helvetica Now Display';
+}
+.fondoVentaTotal {
+    background: rgb(255,255,255);
+    background: linear-gradient(0, rgb(31, 16, 16) 0%, 
+                                                        rgba(30,136,199,1) 100%);
+    box-shadow: 1px 1px 5px #2677ceff, 
+                            -1px -1px 5px #0de5bd;
+}
+.rowCard {
+    border-radius: 30px;
+    margin: 0px;
+    padding: 0px;
+   
+}

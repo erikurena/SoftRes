@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@{
+    var productosMasVendidosJson = ViewData["ProductosMasVendidos"] as string;
+}
+<head>
+    <style>
+        #chartdiv {
+            width: 100%;
+            height: 500px;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+    </style>
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="row text-white bg-danger fondoVentaTotal rowCard w-100">
+                <div class="row text-end  " style="box-sizing: border-box">
+                    <div class="ps-3 pt-3 col-sm-12 col-lg-3 text-center" style="box-sizing:border-box;  ">
+                            <p class="p-3 m-0 totalVendido shadow-sm" >@ViewBag.TotalVendido</p>
+                        </div>
+                    <div class="ps-3 ps-sm-3 pt-3 col-sm-12  col-lg-9 m-0 p-0 text-start">
+                        <label class="card-title " style="font-size: 35px; color:#ff8c00; font-family: 'Helvetica Now Display';">  Productos Vendidos</label>
+                            <p class="card-text p-2 mb-2" style="font-size: 19px">"¡Wow! Los productos se están vendiendo como pan caliente. ¡Veamos hasta dónde podemos llegar!"</p>
+                        </div>
+                </div>
+            </div>
+            <div class="row rowCard pt-3 m-0 "  >
+                <img src="~/FotosProyecto/burgerlogo.webp" alt="Welcome Image" class="img-fluid p-0 m-0" style="width: 100%; border-radius: 5%" >
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div id="chartdiv"></div>
+        </div>
+    </div>
+</body>
+
+
+<script>
+    am5.ready(function () {
+        var root = am5.Root.new("chartdiv");
+
+        // Set themes
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+            paddingLeft: 0,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            layout: root.verticalLayout
+        }));
+
+        var legend = chart.children.push(
+            am5.Legend.new(root, {
+                centerX: am5.p50,
+                x: am5.p50
+            })
+        );
+
+        // Convertir JSON de ViewData a objeto JavaScript
+        var data = @Html.Raw(productosMasVendidosJson);
+
+        var xRenderer = am5xy.AxisRendererX.new(root, {
+            cellStartLocation: 0.1,
+            cellEndLocation: 0.9,
+            minorGridEnabled: true
+        });
+
+        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+            categoryField: "NombreProducto",
+            renderer: xRenderer,
+            tooltip: am5.Tooltip.new(root, {})
+        }));
+
+        xAxis.get("renderer").labels.template.setAll({
+            fill: am5.color(0xFFFFFF) // Color blanco para el texto del eje X
+        });
+
+        xRenderer.grid.template.setAll({
+            location: 1
+        });
+
+        xAxis.data.setAll(data);
+
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            renderer: am5xy.AxisRendererY.new(root, {
+                strokeOpacity: 0.1
+            })
+        }));
+
+        yAxis.get("renderer").labels.template.setAll({
+            fill: am5.color(0xFFFFFF) // Color blanco para el texto del eje Y
+        });
+
+        function makeSeries(name, fieldName) {
+            var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+                name: name,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueYField: fieldName,
+                categoryXField: "NombreProducto"
+            }));
+
+            series.columns.template.setAll({
+                tooltipText: "{name}, {categoryX}:{valueY}",
+                width: am5.percent(90),
+                tooltipY: 0,
+                strokeOpacity: 0
+            });
+
+            series.bullets.push(function () {
+                return am5.Bullet.new(root, {
+                    locationY: 0,
+                    sprite: am5.Label.new(root, {
+                        text: "{valueY}",
+                        centerY: 0,
+                        centerX: am5.p50,
+                        populateText: true
+                    })
+                });
+            });
+            series.data.setAll(data);
+            series.appear();
+            legend.data.push(series);
+        }
+
+        // Dado que ahora solo tenemos una serie (Total), podemos llamarla por su nombre
+        makeSeries("Ventas", "value");
+
+        chart.appear(1000, 100);
+
+    });
+</script>

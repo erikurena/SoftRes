@@ -1,0 +1,57 @@
+﻿@model IEnumerable<restaurante.Models.Producto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Bebidas</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Crear Nuevo</a>
+    <a asp-action="Index" asp-controller="Complemento" class="btn btn-secondary">Regresar</a>
+</p>
+<table class="table tables">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+               Descripción
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Precio)
+            </th>
+            <th>
+              Categoria
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Precio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCategoriaNavigation!.TipoCategoria)
+            </td>
+            <td class="col-1">
+                <div class="d-flex justify-content-end">
+                        <a asp-action="Edit" asp-route-id="@item.IdProducto" class="ms-1 me-1"><i class="fa fa-solid fa-user-pen"></i></a> |
+                        <a asp-action="Details" asp-route-id="@item.IdProducto" class="ms-1 me-1"><i class="fa fa-solid fa-circle-info"></i></a> |
+                        <a asp-action="Delete" asp-route-id="@item.IdProducto" class="ms-1 me-1"><i class="fa fa-solid fa-trash-can"></i></a>
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

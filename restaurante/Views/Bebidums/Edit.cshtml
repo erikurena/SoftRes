@@ -1,0 +1,55 @@
+﻿@model restaurante.Models.Producto
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Actualizar</h1>
+<div class="d-flex justify-content-center">
+    <div class="card col-12 col-sm-8 col-md-6 col-lg-6">
+        <div class="card-header">
+            <h4>Bebidas</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" asp-controller="Bebidums" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="IdProducto" />
+                <div class="form-group">
+                    <label asp-for="Nombre" class="control-label"></label>
+                    <input asp-for="Nombre" class="form-control" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Descripción</label>
+                    <input asp-for="Descripcion" class="form-control" />
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Categoria</label>
+                    <select asp-for="IdCategoria" class="form-control form-select" asp-items="ViewBag.IdCategoria"></select>
+                    <span asp-validation-for="IdCategoria" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Precio" class="control-label"></label>
+                    <input asp-for="Precio" class="form-control" />
+                    <span asp-validation-for="Precio" class="text-danger"></span>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+                    </div>
+                    <div class="form-group col">
+                        <input type="submit" value="Guardar" class="btn btn-primary col-12" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
