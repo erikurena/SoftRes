@@ -34,8 +34,7 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var cliente = await _context.Clientes
-                                                        .FirstOrDefaultAsync(m => m.IdCliente == id);
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(m => m.IdCliente == id);
 
             if (cliente == null)
                 return NotFound();

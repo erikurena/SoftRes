@@ -12,20 +12,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using restaurante.dbContext;
+using restaurante.Interfaces;
 
 namespace restaurante.Controllers
 {
     [Authorize(Roles = "2")]
     public class EmpleadoesController : Controller
     {
-
-        private readonly DbrestauranteContext _context;
+        private readonly IEmpleado _eService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IPasswordHasher<Empleado> _passwordHasher;
 
-        public EmpleadoesController(DbrestauranteContext context, IWebHostEnvironment iWebHostEnviroment, IPasswordHasher<Empleado> passwordHasher)
+        public EmpleadoesController(IEmpleado eservice, IWebHostEnvironment iWebHostEnviroment, IPasswordHasher<Empleado> passwordHasher)
         {
-            _context = context;
+            _eService = eservice;
             _webHostEnvironment = iWebHostEnviroment;
             _passwordHasher = passwordHasher;
         }
@@ -33,8 +33,8 @@ namespace restaurante.Controllers
         // GET: Empleadoes
         public async Task<IActionResult> Index()
         {
-            var dbrestauranteContext = _context.Empleados.AsNoTracking().Include(e => e.IdCargoNavigation).ToListAsync();
-            return View(await dbrestauranteContext);
+            var dbrestauranteContext = await _eService.GetEmpleados();
+            return View(dbrestauranteContext);
         }
 
         // GET: Empleadoes/Details/5
@@ -43,9 +43,7 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var empleado = await _context.Empleados.AsNoTracking()
-                .Include(e => e.IdCargoNavigation)
-                .FirstOrDefaultAsync(m => m.IdEmpleado == id);
+            var empleado = await _eService.GetEmpleadoById(id);
 
             if (empleado == null)
                 return NotFound();
@@ -56,7 +54,7 @@ namespace restaurante.Controllers
         // GET: Empleadoes/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["IdCargo"] = new SelectList(await _context.Cargos.ToListAsync(), "IdCargo", "TipoCargo");
+            ViewData["IdCargo"] = new SelectList(await _eService.Cargos(), "IdCargo", "TipoCargo");
             return View();
         }
 
@@ -72,13 +70,12 @@ namespace restaurante.Controllers
                 if (empleado.Pass != null)
                     empleado.Pass = _passwordHasher.HashPassword(empleado, empleado.Pass);
 
-                _context.Empleados.Add(empleado);
-                await _context.SaveChangesAsync();
+                await _eService.CreateEmpleado(empleado);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
-                ViewData["IdCargo"] = new SelectList(await _context.Cargos.ToListAsync(), "IdCargo", "TipoCargo", empleado.IdCargo);
+                ViewData["IdCargo"] = new SelectList(await _eService.Cargos(), "IdCargo", "TipoCargo", empleado.IdCargo);
                 return View(empleado);
             }
         }
@@ -107,12 +104,12 @@ namespace restaurante.Controllers
             if (id == null)            
                 return NotFound();
 
-            var empleado = await _context.Empleados.FindAsync(id);
+            var empleado = await _eService.GetEmpleadoById(id);
 
             if (empleado == null)
                 return NotFound();
 
-            ViewData["IdCargo"] = new SelectList(await _context.Cargos.ToListAsync(), "IdCargo", "TipoCargo", empleado.IdCargo);
+            ViewData["IdCargo"] = new SelectList(await _eService.Cargos(), "IdCargo", "TipoCargo", empleado.IdCargo);
             return View(empleado);
         }
        
@@ -123,7 +120,7 @@ namespace restaurante.Controllers
             if (id != empleado.IdEmpleado)
                 return NotFound();
 
-            var EmpleadoEncontrado = await _context.Empleados.FirstOrDefaultAsync(x => x.IdEmpleado == id);
+            var EmpleadoEncontrado = await _eService.GetEmpleadoById(id);
 
             if (EmpleadoEncontrado == null)
                 return NotFound();
@@ -138,15 +135,14 @@ namespace restaurante.Controllers
                     EmpleadoEncontrado.FotoEmpleado = null;
             }
 
-            _context.Entry(EmpleadoEncontrado).CurrentValues.SetValues(empleado);
-            try
+           var resultado = await _eService.UpdateEmpleado(id, empleado);
+            if (resultado)
             {               
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+            else 
             {
-                ViewData["IdCargo"] = new SelectList(await _context.Cargos.ToListAsync(), "IdCargo", "TipoCargo", empleado.IdCargo);
+                ViewData["IdCargo"] = new SelectList(await _eService.Cargos(), "IdCargo", "TipoCargo", empleado.IdCargo);
                 return View(empleado);
             }
         }
@@ -158,17 +154,12 @@ namespace restaurante.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarPassword(int id, Empleado empleado)
         {
-            var objUsuario = await _context.Empleados.FirstOrDefaultAsync(x => x.IdEmpleado == id);
-
-            if (objUsuario == null)
+            if (id != empleado.IdEmpleado)
                 return NotFound();
-
-            objUsuario.Pass = _passwordHasher.HashPassword(empleado, empleado.Pass!);
 
             try
             {
-                _context.Empleados.Attach(objUsuario);
-                await _context.SaveChangesAsync();
+                await _eService.CambiarPassword(id, empleado);
                 return RedirectToAction(nameof(Index));
             }
             catch {
@@ -181,9 +172,8 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var empleado = await _context.Empleados.AsNoTracking()
-                                                                    .Include(e => e.IdCargoNavigation)
-                                                                    .FirstOrDefaultAsync(m => m.IdEmpleado == id);
+            var empleado = await _eService.GetEmpleadoById(id);
+
             if (empleado == null)
                 return NotFound();
 
@@ -195,18 +185,10 @@ namespace restaurante.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var empleado = await _context.Empleados.FindAsync(id);
+            var empleado = await _eService.DeleteEmpleado(id);
 
-            if (empleado != null)
-                _context.Empleados.Remove(empleado);
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return empleado ? RedirectToAction(nameof(Index)) : NotFound();
         }
 
-        private bool EmpleadoExists(int id)
-        {
-            return _context.Empleados.Any(e => e.IdEmpleado == id);
-        }
     }
 }

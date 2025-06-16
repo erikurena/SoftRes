@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using restaurante.Models;
 using Microsoft.AspNetCore.Authorization;
 using restaurante.dbContext;
+using restaurante.Interfaces;
 
 namespace restaurante.Controllers
 {
@@ -15,17 +16,17 @@ namespace restaurante.Controllers
 
     public class QuesoesController : Controller
     {
-        private readonly DbrestauranteContext _context;
+        private readonly IComplemento _compleService;
 
-        public QuesoesController(DbrestauranteContext context)
+        public QuesoesController(IComplemento complemento)
         {
-            _context = context;
+            _compleService = complemento;
         }
 
         // GET: Quesoes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int id)
         {
-            return View(await _context.Complementos.Where(x => x.IdCategoriaComplemento == 1).Include(x => x.IdCategoriaComplementoNavigation).ToListAsync());
+            return View(await _compleService.GetAllComplementos(id));
         }
 
         // GET: Quesoes/Details/5
@@ -34,8 +35,7 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var queso = await _context.Complementos.AsNoTracking().Include(x => x.IdCategoriaComplementoNavigation)
-                .FirstOrDefaultAsync(m => m.IdComplemento == id);
+            var queso = await _compleService.GetComplementoById(id);
 
             if (queso == null)
                 return NotFound();
@@ -46,7 +46,7 @@ namespace restaurante.Controllers
         // GET: Quesoes/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["listaQueso"] = new SelectList(await _context.Categoriacomplementos.ToListAsync(), "IdCategoriaComplemento", "TipoCategoriaComplemento");
+            ViewData["listaQueso"] = new SelectList(await _compleService.GetAllCategoriasComplemento(), "IdCategoriaComplemento", "TipoCategoriaComplemento");
             return View();
         }
      
@@ -56,12 +56,11 @@ namespace restaurante.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Complementos.Add(complemento);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await _compleService.CreateComplemento(complemento);
+                return RedirectToAction(nameof(Index), new { id = 1 });
             }
 
-            ViewData["listaQueso"] = new SelectList(await _context.Categoriacomplementos.ToListAsync(), "IdCategoriaComplemento", "TipoCategoriaComplemento");
+            ViewData["listaQueso"] = new SelectList(await _compleService.GetAllCategoriasComplemento(), "IdCategoriaComplemento", "TipoCategoriaComplemento");
             return View(complemento);
         }
 
@@ -71,8 +70,8 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            ViewData["listaQueso"] = new SelectList(await _context.Categoriacomplementos.ToListAsync(), "IdCategoriaComplemento", "TipoCategoriaComplemento");
-            var queso = await _context.Complementos.FindAsync(id);
+            ViewData["listaQueso"] = new SelectList(await _compleService.GetAllCategoriasComplemento(), "IdCategoriaComplemento", "TipoCategoriaComplemento");
+            var queso = await _compleService.GetComplementoById(id);
 
             if (queso == null)
                 return NotFound();
@@ -89,19 +88,8 @@ namespace restaurante.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(complemento);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuesoExists(complemento.IdComplemento))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                    var resultado = await _compleService.UpdateComplemento(id, complemento);
+                   return resultado ? RedirectToAction(nameof(Index),new {id = 1}) : NotFound();
             }
             return View(complemento);
         }
@@ -112,8 +100,7 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var queso = await _context.Complementos.Include(x => x.IdCategoriaComplementoNavigation)
-                .FirstOrDefaultAsync(m => m.IdComplemento == id);
+            var queso = await _compleService.GetComplementoById(id);
 
             if (queso == null)
                 return NotFound();
@@ -126,18 +113,9 @@ namespace restaurante.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var queso = await _context.Complementos.FindAsync(id);
+            var queso = await _compleService.DeleteComplemento(id);
 
-            if (queso != null)
-                _context.Complementos.Remove(queso);
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool QuesoExists(int id)
-        {
-            return _context.Complementos.Any(e => e.IdComplemento == id);
+            return queso ? RedirectToAction(nameof(Index), new { id = 1 }) : View();
         }
     }
 }

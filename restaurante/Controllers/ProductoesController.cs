@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using restaurante.Models;
 using Microsoft.AspNetCore.Authorization;
 using restaurante.dbContext;
+using restaurante.Interfaces;
+using restaurante.Dtos;
 
 namespace restaurante.Controllers
 {
@@ -15,18 +17,19 @@ namespace restaurante.Controllers
 
     public class ProductoesController : Controller
     {
-        private readonly DbrestauranteContext _context;
+        private readonly IProducto _productoService;
 
-        public ProductoesController(DbrestauranteContext context)
+        public ProductoesController(IProducto productoService)
         {
-            _context = context;
+            _productoService = productoService;
         }
 
         // GET: Productoes
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<ActionResult<List<ProductoDto>>> Index(int? id)
         {
-            var dbrestauranteContext = _context.Productos.AsNoTracking().Where(p => p.IdCategoria != 2).Include(p => p.IdCategoriaNavigation);
-            return View(await dbrestauranteContext.ToListAsync());
+            var producto =  await _productoService.GetProducto(id);
+            return View(producto);
         }
 
         // GET: Productoes/Details/5
@@ -35,9 +38,7 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var producto = await _context.Productos.AsNoTracking()
-                .Include(p => p.IdCategoriaNavigation)
-                .FirstOrDefaultAsync(m => m.IdProducto == id);
+            var producto = await _productoService.Details(id.Value);
 
             if (producto == null)
                 return NotFound();
@@ -48,7 +49,7 @@ namespace restaurante.Controllers
         // GET: Productoes/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria");
+            ViewData["IdCategoria"] = new SelectList(await _productoService.GetCategoria(), "IdCategoria", "TipoCategoria");
             return View();
         }
         
@@ -58,26 +59,30 @@ namespace restaurante.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(producto);
-                await _context.SaveChangesAsync();
+                var resultado = await _productoService.CrearProducto(producto);
+                if (!resultado)
+                {
+                    ViewData["IdCategoria"] = new SelectList(await _productoService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+                    return View(producto);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+            ViewData["IdCategoria"] = new SelectList(await _productoService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
             return View(producto);
         }
 
         // GET: Productoes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _productoService.Details(id);
 
             if (producto == null)
                 return NotFound();
 
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+            ViewData["IdCategoria"] = new SelectList(await _productoService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
             return View(producto);
         }
 
@@ -90,33 +95,20 @@ namespace restaurante.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(producto);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductoExists(producto.IdProducto))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                var resutltado = await _productoService.ModificarProducto(id, producto);
+                return resutltado ? RedirectToAction(nameof(Index)) : NotFound();
             }
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+            ViewData["IdCategoria"] = new SelectList(await _productoService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
             return View(producto);
         }
 
         // GET: Productoes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
                 return NotFound();
 
-            var producto = await _context.Productos.AsNoTracking()
-                .Include(p => p.IdCategoriaNavigation)
-                .FirstOrDefaultAsync(m => m.IdProducto == id);
+            var producto = await _productoService.Details(id);
 
             if (producto == null)
                 return NotFound();
@@ -129,18 +121,10 @@ namespace restaurante.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _productoService.EliminarProducto(id);
 
-            if (producto != null)
-                _context.Productos.Remove(producto);
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return producto ? RedirectToAction(nameof(Index)) : NotFound();
         }
 
-        private bool ProductoExists(int id)
-        {
-            return _context.Productos.Any(e => e.IdProducto == id);
-        }
     }
 }

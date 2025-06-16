@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using restaurante.Models;
 using restaurante.dbContext;
+using restaurante.Interfaces;
+using restaurante.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 var connectionString = builder.Configuration.GetConnectionString("dbrestaurante") ?? throw new Exception("No hay Conexion A la base de datos");
 
 builder.Services.AddDbContext<DbrestauranteContext>(conexion => conexion.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddScoped<IProducto, ProductoService>();
+builder.Services.AddScoped<IComplemento,ComplementoService>();
+builder.Services.AddScoped<IEmpleado, EmpleadoService>();
 
 var app = builder.Build();
 

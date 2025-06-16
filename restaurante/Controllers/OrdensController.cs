@@ -53,47 +53,8 @@ namespace restaurante.Controllers
         }
 
         // GET: Ordens/Create
-        public async Task<IActionResult> Create()
+        public  IActionResult Create()
         {
-            var productos = await _context.Productos
-                                                                    .Where(x => x.IdCategoria == 1)
-                                                                    .Select(p => new
-                                                                    {
-                                                                        p.IdProducto,
-                                                                        NombreCompleto = p.Nombre + " " + p.Descripcion,
-                                                                        p.Precio,
-                                                                        p.IdCategoria
-                                                                    }).ToListAsync();
-
-            var bebidas = await _context.Productos.Select(x => new
-                                                                    {
-                                                                        x.IdProducto,
-                                                                        NombreCompleto = x.Nombre + " " + x.Descripcion,
-                                                                        x.Precio,
-                                                                        x.IdCategoria
-                                                                    }).Where(x => x.IdCategoria == 2).ToListAsync();
-
-            var items = await _context.Productos.Select(x => new
-                                                                    {
-                                                                        x.IdProducto,
-                                                                        NombreCompleto = x.Nombre + " " + x.Descripcion,
-                                                                        x.Precio,
-                                                                        x.IdCategoria
-                                                                    }).ToListAsync();
-
-            var listacomplementos =  _context.Complementos.Select(x => new
-                                                                                                    {
-                                                                                                        x.IdComplemento,
-                                                                                                        x.NombreIngrediente,
-                                                                                                        CategoriaNombre = x.IdCategoriaComplementoNavigation!.TipoCategoriaComplemento
-                                                                                                    }).ToList().GroupBy(x => x.CategoriaNombre).ToList();
-
-            ViewBag.ProductosConPrecios = items;
-
-            ViewData["IdProducto"] = new SelectList(productos, "IdProducto", "NombreCompleto");
-            ViewData["listaBebidas"] = new SelectList(bebidas, "IdProducto", "NombreCompleto");
-
-            ViewData["listacomplementos"] = listacomplementos;
             return View();
         }
 
@@ -101,26 +62,7 @@ namespace restaurante.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Orden orden,Cliente cliente,List<Detalleorden> detalleorden)
         {
-            try
-            {
-                _context.Clientes.Add(cliente);
-                await _context.SaveChangesAsync();
-
-                orden.IdCliente = cliente.IdCliente;
-                orden.IdEmpleado = 4;
-                orden.FechaOrden = DateOnly.FromDateTime(DateTime.Now);
-                orden.TiempoOrden = TimeOnly.FromDateTime(DateTime.Now);
-                orden.Total = 0;
-
-                _context.Ordens.Add(orden);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception)
-            {
-                return View();
-            }
+            return View();
         }
 
         // GET: Ordens/Edit/5

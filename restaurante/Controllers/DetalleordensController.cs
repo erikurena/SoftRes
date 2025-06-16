@@ -50,67 +50,7 @@ namespace restaurante.Controllers
         // GET: Detalleordens/Create
         public async Task<IActionResult> Create()
         {
-            var Hamburgesas = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 1)
-                                                                .Select(p => new
-                                                                {
-                                                                    p.IdProducto,
-                                                                    NombreCompleto = p.Nombre + " " + p.Descripcion,
-                                                                    p.Precio,
-                                                                    p.IdCategoria
-                                                                }).ToListAsync();
-
-            var bebidas = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 2)
-                                                                .Select(x => new
-                                                                {
-                                                                    x.IdProducto,
-                                                                    NombreCompleto = x.Nombre + " " + x.Descripcion,
-                                                                    x.Precio,
-                                                                    x.IdCategoria
-                                                                }).ToListAsync();
-
-            var Pollos = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 3)
-                                                            .Select(x => new
-                                                            {
-                                                                x.IdProducto,
-                                                                NombreCompleto = x.Nombre + " " + x.Descripcion,
-                                                                x.Precio,
-                                                                x.IdCategoria
-                                                            }).ToListAsync();
-
-            var extras = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 4)
-                                            .Select(x => new
-                                            {
-                                                x.IdProducto,
-                                                NombreCompleto = x.Nombre + " " + x.Descripcion,
-                                                x.Precio,
-                                                x.IdCategoria
-                                            }).ToListAsync();
-
-            var listacomplementos = await _context.Complementos.AsNoTracking()
-                                                                                        .Select(x => new
-                                                                                        {
-                                                                                            x.IdComplemento,
-                                                                                            x.NombreIngrediente,
-                                                                                            CategoriaNombre = x.IdCategoriaComplementoNavigation.TipoCategoriaComplemento
-                                                                                        }).GroupBy(x => x.CategoriaNombre).ToListAsync();
-
-            var items = await _context.Productos.AsNoTracking()
-                                                            .Select(x => new
-                                                            {
-                                                                x.IdProducto,
-                                                                NombreCompleto = x.Nombre + " " + x.Descripcion,
-                                                                x.Precio,
-                                                                x.IdCategoria
-                                                            }).ToListAsync();
-
-            ViewBag.ProductosConPrecios = items;
-
-            ViewData["IdProducto"] = new SelectList(Hamburgesas, "IdProducto", "NombreCompleto");
-            ViewData["listaBebidas"] = new SelectList(bebidas, "IdProducto", "NombreCompleto");
-            ViewData["listaPollos"] = new SelectList(Pollos, "IdProducto", "NombreCompleto");
-            ViewData["listaExtras"] = new SelectList(extras, "IdProducto", "NombreCompleto");
-
-            ViewData["listacomplementos"] = listacomplementos;
+            await ViewDataProductos();
             return View();
         }
 
@@ -170,41 +110,74 @@ namespace restaurante.Controllers
                 else
                 {
                     transaction.Rollback();
+                    await ViewDataProductos();
 
-                    var Hamburgesas = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 1).Select(p => new
-                                                                { p.IdProducto, NombreCompleto = p.Nombre + " " + p.Descripcion, p.Precio, p.IdCategoria }).ToListAsync();
-
-                    var bebidas = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 2).Select(x => new
-                                                                        { x.IdProducto, NombreCompleto = x.Nombre + " " + x.Descripcion, x.Precio, x.IdCategoria }).ToListAsync();
-
-                    var Pollos = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 3).Select(x => new
-                                                                    { x.IdProducto, NombreCompleto = x.Nombre + " " + x.Descripcion, x.Precio,x.IdCategoria }).ToListAsync();
-
-                    var extras = await _context.Productos.AsNoTracking().Where(x => x.IdCategoria == 4).Select(x => new
-                                                    { x.IdProducto, NombreCompleto = x.Nombre + " " + x.Descripcion,x.Precio,x.IdCategoria }).ToListAsync();
-
-                    var listacomplementos = await _context.Complementos.AsNoTracking().Select(x => new
-                                                                      { x.IdComplemento, x.NombreIngrediente, CategoriaNombre = x.IdCategoriaComplementoNavigation.TipoCategoriaComplemento })
-                                                                        .GroupBy(x => x.CategoriaNombre).ToListAsync();
-
-                    var items = await _context.Productos.AsNoTracking().Select(x => new
-                                                                    { x.IdProducto, NombreCompleto = x.Nombre + " " + x.Descripcion, x.Precio, x.IdCategoria }).ToListAsync();
-
-                    ViewBag.ProductosConPrecios = items;
-
-                    ViewData["IdProducto"] = new SelectList(Hamburgesas, "IdProducto", "NombreCompleto");
-                    ViewData["listaBebidas"] = new SelectList(bebidas, "IdProducto", "NombreCompleto");
-                    ViewData["listaPollos"] = new SelectList(Pollos, "IdProducto", "NombreCompleto");
-                    ViewData["listaExtras"] = new SelectList(extras, "IdProducto", "NombreCompleto");
-
-                    ViewData["listacomplementos"] = listacomplementos;
-                    
                     TempData["error"] = "Debe Ingrear productos en el carrito de productos.";
                     return View();
                 }
             }
         }
+        public async Task ViewDataProductos()
+        {
+            var listaproductos = await _context.Productos.AsNoTracking().ToListAsync();
 
+            var Hamburguesas = listaproductos.Where(x => x.IdCategoria == 1).Select(x => new
+            {
+                x.IdProducto,
+                NombreCompleto = $"{x.Nombre} {x.Descripcion}",
+                x.Precio,
+                x.IdCategoria
+            }).ToList();
+
+            var bebidas = listaproductos.Where(x => x.IdCategoria == 2).Select(x => new
+            {
+                x.IdProducto,
+                NombreCompleto = x.Nombre + " " + x.Descripcion,
+                x.Precio,
+                x.IdCategoria
+            }).ToList();
+
+            var Pollos = listaproductos.Where(x => x.IdCategoria == 3).Select(x => new
+            {
+                x.IdProducto,
+                NombreCompleto = x.Nombre + " " + x.Descripcion,
+                x.Precio,
+                x.IdCategoria
+            }).ToList();
+
+            var extras = listaproductos.Where(x => x.IdCategoria == 4).Select(x => new
+            {
+                x.IdProducto,
+                NombreCompleto = x.Nombre + " " + x.Descripcion,
+                x.Precio,
+                x.IdCategoria
+            }).ToList();
+
+            var listacomplementos = await _context.Complementos.AsNoTracking()
+                                                                                        .Select(x => new
+                                                                                        {
+                                                                                            x.IdComplemento,
+                                                                                            x.NombreIngrediente,
+                                                                                            CategoriaNombre = x.IdCategoriaComplementoNavigation.TipoCategoriaComplemento
+                                                                                        }).GroupBy(x => x.CategoriaNombre).ToListAsync();
+
+            var items = await _context.Productos.AsNoTracking().Select(x => new
+            {
+                x.IdProducto,
+                NombreCompleto = x.Nombre + " " + x.Descripcion,
+                x.Precio,
+                x.IdCategoria
+            }).ToListAsync();
+
+            ViewBag.ProductosConPrecios = items;
+
+            ViewData["IdProducto"] = new SelectList(Hamburguesas, "IdProducto", "NombreCompleto");
+            ViewData["listaBebidas"] = new SelectList(bebidas, "IdProducto", "NombreCompleto");
+            ViewData["listaPollos"] = new SelectList(Pollos, "IdProducto", "NombreCompleto");
+            ViewData["listaExtras"] = new SelectList(extras, "IdProducto", "NombreCompleto");
+
+            ViewData["listacomplementos"] = listacomplementos;
+        }
         // GET: Detalleordens/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

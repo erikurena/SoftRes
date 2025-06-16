@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using restaurante.Models;
-using Microsoft.AspNetCore.Authorization;
 using restaurante.dbContext;
+using restaurante.Dtos;
+using restaurante.Interfaces;
+using restaurante.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace restaurante.Controllers
 {
@@ -15,35 +17,30 @@ namespace restaurante.Controllers
 
     public class BebidumsController : Controller
     {
-        private readonly DbrestauranteContext _context;
+        private readonly IProducto _bebidumsService;
 
-        public BebidumsController(DbrestauranteContext context)
+        public BebidumsController(IProducto bebidumsService)
         {
-            _context = context;
+            _bebidumsService = bebidumsService;
         }
 
         // GET: Bebidums
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult<List<ProductoDto>>> Index(int? id)
         {
-            var dbrestauranteContext = _context.Productos.Include(b => b.IdCategoriaNavigation).Where( b => b.IdCategoria == 2);
-            return View(await dbrestauranteContext.ToListAsync());
+            var dbrestauranteContext = await _bebidumsService.GetProducto(id);
+            return View(dbrestauranteContext);
         }
 
         // GET: Bebidums/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
+            if (id is null)            
                 return NotFound();
-            }
 
-            var bebidum = await _context.Productos
-                .Include(b => b.IdCategoriaNavigation)
-                .FirstOrDefaultAsync(m => m.IdProducto == id);
-            if (bebidum == null)
-            {
-                return NotFound();
-            }
+            var bebidum = await _bebidumsService.Details(id);
+
+            if (bebidum == null)            
+                return NotFound();           
 
             return View(bebidum);
         }
@@ -51,7 +48,7 @@ namespace restaurante.Controllers
         // GET: Bebidums/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria");
+            ViewData["IdCategoria"] = new SelectList(await _bebidumsService.GetCategoria(), "IdCategoria", "TipoCategoria");
             return View();
         }
         
@@ -61,12 +58,11 @@ namespace restaurante.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(producto);
-                await _context.SaveChangesAsync();
+                await _bebidumsService.CrearProducto(producto);
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdCategoria"] =  new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+            ViewData["IdCategoria"] =  new SelectList(await _bebidumsService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
             return View(producto);
         }
 
@@ -76,12 +72,12 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _bebidumsService.Details(id);
 
             if (producto == null)
                 return NotFound();
 
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+            ViewData["IdCategoria"] = new SelectList(await _bebidumsService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
             return View(producto);
         }
         
@@ -94,21 +90,10 @@ namespace restaurante.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(producto);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BebidumExists(producto.IdProducto))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                var resultado = await _bebidumsService.ModificarProducto(id,producto);
+                return resultado ? RedirectToAction(nameof(Index)) : NotFound();
             }
-            ViewData["IdCategoria"] = new SelectList(await _context.Categoria.ToListAsync(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
+            ViewData["IdCategoria"] = new SelectList(await _bebidumsService.GetCategoria(), "IdCategoria", "TipoCategoria", producto.IdCategoria);
             return View(producto);
         }
 
@@ -118,9 +103,7 @@ namespace restaurante.Controllers
             if (id == null)
                 return NotFound();
 
-            var bebidum = await _context.Productos
-                .Include(b => b.IdCategoriaNavigation)
-                .FirstOrDefaultAsync(m => m.IdProducto == id);
+            var bebidum = await _bebidumsService.Details(id);
 
             if (bebidum == null)
                 return NotFound();
@@ -133,20 +116,10 @@ namespace restaurante.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bebidum = await _context.Productos.FindAsync(id);
+            var bebidum = await _bebidumsService.EliminarProducto(id);
 
-            if (bebidum != null)
-            {
-                _context.Productos.Remove(bebidum);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return bebidum ? RedirectToAction(nameof(Index)) : NotFound();
         }
 
-        private bool BebidumExists(int id)
-        {
-            return _context.Productos.Any(e => e.IdProducto == id);
-        }
     }
 }
