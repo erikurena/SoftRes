@@ -10,7 +10,6 @@ public partial class Producto
     public int IdProducto { get; set; }
     [Required(ErrorMessage = "El campo es Obligatorio")]
     public string? Nombre { get; set; }
-
     public string? Descripcion { get; set; }
 
     public int? IdCategoria { get; set; }

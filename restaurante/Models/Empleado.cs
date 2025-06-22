@@ -25,7 +25,6 @@ public partial class Empleado
     public int IdCargo { get; set; }
     [Required(ErrorMessage = "El campo es Obligatorio")]
     public string? Pass { get; set; }
-
     public string? FotoEmpleado { get; set; }
     [NotMapped]
     public IFormFile? FotoEmpleadoFile { get; set; }

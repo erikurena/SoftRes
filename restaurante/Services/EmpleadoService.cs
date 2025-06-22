@@ -8,6 +8,7 @@ namespace restaurante.Services
 {
     public class EmpleadoService : IEmpleado
     {
+
         private readonly DbrestauranteContext _context;
         private readonly IPasswordHasher<Empleado> _passwordHasher;
         public EmpleadoService(DbrestauranteContext context, IPasswordHasher<Empleado> passwordHasher)

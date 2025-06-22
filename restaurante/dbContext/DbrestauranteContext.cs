@@ -6,6 +6,7 @@ using restaurante.Models;
 
 namespace restaurante.dbContext;
 
+
 public partial class DbrestauranteContext : DbContext
 {
     public DbrestauranteContext()

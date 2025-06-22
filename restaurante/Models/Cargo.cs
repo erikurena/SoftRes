@@ -10,4 +10,5 @@ public partial class Cargo
     public string? TipoCargo { get; set; }
 
     public virtual List<Empleado>? Empleados { get; set; } = new List<Empleado>();
+
 }

@@ -13,7 +13,6 @@ a {
     transition: all 0.5s ease;
     position: relative;
 }
-
 #sidebar-wrapper {
     background-image: url("/FotosProyecto/1594_939cf.webp");
     z-index: 1000;

@@ -12,4 +12,5 @@ namespace restaurante.Interfaces
         Task<bool> EliminarProducto(int id);
         Task<List<Categorium>> GetCategoria();
     }
+
 }

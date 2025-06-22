@@ -13,6 +13,7 @@ namespace restaurante.Controllers
 {
     [Authorize]
 
+
     public class ClientesController : Controller
     {
         private readonly DbrestauranteContext _context;

@@ -6,7 +6,6 @@ namespace restaurante.Models;
 public partial class Detallecomplemento
 {
     public int IdDetalleProducto { get; set; }
-
     public int? IdDetalleOrden { get; set; }
 
     public int? IdComplemento { get; set; }

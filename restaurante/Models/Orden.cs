@@ -8,7 +8,6 @@ public partial class Orden
     public int IdOrden { get; set; }
 
     public int IdCliente { get; set; }
-
     public int IdEmpleado { get; set; }
 
     public DateOnly? FechaOrden { get; set; }

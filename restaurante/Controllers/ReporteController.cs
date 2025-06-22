@@ -12,7 +12,6 @@ using restaurante.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using restaurante.dbContext;
 
-
 namespace restaurante.Controllers
 {
     public class ReporteController : Controller

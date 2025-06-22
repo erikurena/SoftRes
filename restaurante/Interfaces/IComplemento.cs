@@ -11,4 +11,5 @@ namespace restaurante.Interfaces
         Task<bool> DeleteComplemento(int id);
         Task<List<Categoriacomplemento>> GetAllCategoriasComplemento();
     }
+
 }

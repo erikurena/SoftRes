@@ -10,4 +10,5 @@ public partial class Categoriacomplemento
     public string? TipoCategoriaComplemento { get; set; }
 
     public virtual ICollection<Complemento>? Complementos { get; set; } = new List<Complemento>();
+
 }

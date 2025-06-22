@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using restaurante.Models;
 using restaurante.dbContext;
 
-
 namespace restaurante.Controllers
 {
     public class LoginController : Controller

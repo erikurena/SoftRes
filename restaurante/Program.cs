@@ -6,7 +6,6 @@ using restaurante.dbContext;
 using restaurante.Interfaces;
 using restaurante.Services;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
  //Add services to the container.

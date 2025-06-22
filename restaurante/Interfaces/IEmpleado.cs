@@ -12,4 +12,5 @@ namespace restaurante.Interfaces
         Task<List<Cargo>> Cargos();
         Task CambiarPassword(int? id, Empleado empleado);
     }
+
 }

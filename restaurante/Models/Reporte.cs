@@ -13,5 +13,6 @@ namespace restaurante.Models
         [Required(ErrorMessage = "Ingrese la Fecha de Fin")]
         [DisplayName("Fecha de Finalización")]
         public DateOnly? FechaFin { get; set; }
+
     }
 }
